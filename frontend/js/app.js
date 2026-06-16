@@ -30,7 +30,7 @@
   }
 
   // ── View Router ──
-  var allViews = ['login-view','dashboard-view','policies-view','claims-view','reports-view','users-view','audit-view','pricing-view','admin-view'];
+  var allViews = ['login-view','dashboard-view','policies-view','policy-detail-view','claims-view','claim-detail-view','reports-view','users-view','audit-view','pricing-view','admin-view'];
   var adminLinks = ['link-reports','link-users','link-audit','link-admin'];
   var managerLinks = ['link-reports'];
 
@@ -71,8 +71,8 @@
       var stats = await apiFetch('/dashboard/stats');
       $('stat-policies').textContent = stats.total_policies;
       $('stat-claims').textContent = stats.active_claims;
-      $('stat-premiums').textContent = '$' + Number(stats.total_premiums).toLocaleString();
-      $('stat-claims-amt').textContent = '$' + Number(stats.total_claims_amount).toLocaleString();
+      $('stat-premiums').textContent = '₹' + Number(stats.total_premiums).toLocaleString('en-IN');
+      $('stat-claims-amt').textContent = '₹' + Number(stats.total_claims_amount).toLocaleString('en-IN');
     } catch(e) { console.error('Stats error', e); }
 
     // Charts (Manager+)
@@ -123,6 +123,8 @@
 
   // ── Policies ──
   async function loadPolicies() {
+    // Show create form only for manager+
+    $('create-policy-card').style.display = (['admin','manager'].indexOf(state.role) > -1) ? 'block' : 'none';
     try {
       var policies = await apiFetch('/policies');
       var tbody = $('policies-table-body');
@@ -132,13 +134,80 @@
           '<td>' + p.policy_number + '</td>' +
           '<td>' + p.holder_name + '</td>' +
           '<td>' + p.policy_type.toUpperCase() + '</td>' +
-          '<td>$' + Number(p.premium_amount).toLocaleString() + '</td>' +
-          '<td>$' + Number(p.coverage_amount).toLocaleString() + '</td>' +
+          '<td>₹' + Number(p.premium_amount).toLocaleString('en-IN') + '</td>' +
+          '<td>₹' + Number(p.coverage_amount).toLocaleString('en-IN') + '</td>' +
           '<td>' + (p.region || '—') + '</td>' +
           '<td>' + badge(p.status) + '</td></tr>';
       });
+      // Make rows clickable
+      tbody.querySelectorAll('tr').forEach(function(row, idx) {
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', function() { loadPolicyDetail(policies[idx].id); });
+      });
     } catch(e) { console.error('Policies error', e); }
   }
+
+  // ── Create Policy (Manager+) ──
+  $('policy-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var msg = $('pol-msg');
+    msg.textContent = 'Creating...'; msg.style.color = 'var(--text-muted)';
+    try {
+      await apiFetch('/policies', {
+        method: 'POST',
+        body: JSON.stringify({
+          policy_number: $('pol-number').value,
+          holder_name: $('pol-holder').value,
+          holder_email: $('pol-email').value,
+          policy_type: $('pol-type').value,
+          premium_amount: parseFloat($('pol-premium').value),
+          coverage_amount: parseFloat($('pol-coverage').value),
+          start_date: $('pol-start').value,
+          end_date: $('pol-end').value,
+          region: $('pol-region').value
+        })
+      });
+      msg.textContent = '✅ Policy created!'; msg.style.color = 'var(--accent)';
+      $('policy-form').reset();
+      loadPolicies();
+    } catch(err) {
+      msg.textContent = '❌ ' + err.message; msg.style.color = 'var(--error)';
+    }
+  });
+
+  var currentPolicyId = null;
+  async function loadPolicyDetail(id) {
+    currentPolicyId = id;
+    try {
+      var p = await apiFetch('/policies/' + id);
+      showView('policy-detail-view');
+      $('pd-number').textContent = p.policy_number;
+      $('pd-type').textContent = p.policy_type.toUpperCase();
+      $('pd-status').innerHTML = badge(p.status);
+      $('pd-region').textContent = p.region || '—';
+      $('pd-holder').textContent = p.holder_name;
+      $('pd-email').textContent = p.holder_email || '—';
+      $('pd-premium').textContent = '₹' + Number(p.premium_amount).toLocaleString('en-IN');
+      $('pd-coverage').textContent = '₹' + Number(p.coverage_amount).toLocaleString('en-IN');
+      $('pd-start').textContent = p.start_date ? p.start_date.split('T')[0] : '—';
+      $('pd-end').textContent = p.end_date ? p.end_date.split('T')[0] : '—';
+      // Show cancel button for admin only
+      $('pd-actions').style.display = (state.role === 'admin') ? 'block' : 'none';
+      $('pd-msg').textContent = '';
+    } catch(e) { console.error('Policy detail error', e); }
+  }
+
+  // ── Cancel Policy (Admin) ──
+  $('btn-cancel-policy').addEventListener('click', async function() {
+    if (!currentPolicyId) return;
+    try {
+      await apiFetch('/policies/' + currentPolicyId, { method: 'DELETE' });
+      $('pd-msg').textContent = '✅ Policy cancelled'; $('pd-msg').style.color = 'var(--accent)';
+      $('pd-status').innerHTML = badge('cancelled');
+    } catch(err) {
+      $('pd-msg').textContent = '❌ ' + err.message; $('pd-msg').style.color = 'var(--error)';
+    }
+  });
 
   // ── Claims ──
   async function loadClaims() {
@@ -151,22 +220,88 @@
           '<td>' + c.claim_number + '</td>' +
           '<td>' + c.claimant_name + '</td>' +
           '<td>' + c.claim_type + '</td>' +
-          '<td>$' + Number(c.claim_amount).toLocaleString() + '</td>' +
+          '<td>₹' + Number(c.claim_amount).toLocaleString('en-IN') + '</td>' +
           '<td>' + badge(c.status) + '</td></tr>';
+      });
+      // Make rows clickable
+      tbody.querySelectorAll('tr').forEach(function(row, idx) {
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', function() { loadClaimDetail(claims[idx].id); });
       });
     } catch(e) { console.error('Claims error', e); }
   }
+
+  // ── Submit Claim ──
+  $('claim-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var msg = $('claim-msg');
+    msg.textContent = 'Submitting...'; msg.style.color = 'var(--text-muted)';
+    try {
+      await apiFetch('/claims', {
+        method: 'POST',
+        body: JSON.stringify({
+          claim_number: 'CLM-' + Date.now(),
+          policy_id: parseInt($('claim-policy-id').value),
+          claimant_name: $('claim-claimant').value,
+          claim_type: $('claim-type').value,
+          description: $('claim-desc').value,
+          claim_amount: parseFloat($('claim-amount').value)
+        })
+      });
+      msg.textContent = '✅ Claim submitted successfully!'; msg.style.color = 'var(--accent)';
+      $('claim-form').reset();
+      loadClaims();
+    } catch(err) {
+      msg.textContent = '❌ ' + err.message; msg.style.color = 'var(--error)';
+    }
+  });
+
+  var currentClaimId = null;
+  async function loadClaimDetail(id) {
+    currentClaimId = id;
+    try {
+      var c = await apiFetch('/claims/' + id);
+      showView('claim-detail-view');
+      $('cd-number').textContent = c.claim_number;
+      $('cd-type').textContent = c.claim_type;
+      $('cd-status').innerHTML = badge(c.status);
+      $('cd-amount').textContent = '₹' + Number(c.claim_amount).toLocaleString('en-IN');
+      $('cd-claimant').textContent = c.claimant_name;
+      $('cd-desc').textContent = c.description || '—';
+      $('cd-submitted').textContent = c.submitted_at ? new Date(c.submitted_at).toLocaleString() : '—';
+      $('cd-resolved').textContent = c.resolved_at ? new Date(c.resolved_at).toLocaleString() : 'Pending';
+      // Show status update for manager+
+      $('cd-actions').style.display = (['admin','manager'].indexOf(state.role) > -1) ? 'block' : 'none';
+      $('cd-new-status').value = c.status;
+      $('cd-msg').textContent = '';
+    } catch(e) { console.error('Claim detail error', e); }
+  }
+
+  // ── Update Claim Status (Manager+) ──
+  $('btn-update-claim').addEventListener('click', async function() {
+    if (!currentClaimId) return;
+    try {
+      await apiFetch('/claims/' + currentClaimId, {
+        method: 'PUT',
+        body: JSON.stringify({ status: $('cd-new-status').value })
+      });
+      $('cd-msg').textContent = '✅ Status updated'; $('cd-msg').style.color = 'var(--accent)';
+      $('cd-status').innerHTML = badge($('cd-new-status').value);
+    } catch(err) {
+      $('cd-msg').textContent = '❌ ' + err.message; $('cd-msg').style.color = 'var(--error)';
+    }
+  });
 
   // ── Reports ──
   async function loadReports() {
     try {
       var report = await apiFetch('/reports/executive');
-      $('stat-revenue').textContent = '$' + Number(report.total_revenue).toLocaleString();
-      $('stat-payout').textContent = '$' + Number(report.total_payout).toLocaleString();
+      $('stat-revenue').textContent = '₹' + Number(report.total_revenue).toLocaleString('en-IN');
+      $('stat-payout').textContent = '₹' + Number(report.total_payout).toLocaleString('en-IN');
       var tbody = $('region-table-body');
       tbody.innerHTML = '';
       report.region_breakdown.forEach(function(r) {
-        tbody.innerHTML += '<tr><td>' + r.region + '</td><td>' + r.count + '</td><td>$' + Number(r.revenue).toLocaleString() + '</td></tr>';
+        tbody.innerHTML += '<tr><td>' + r.region + '</td><td>' + r.count + '</td><td>₹' + Number(r.revenue).toLocaleString('en-IN') + '</td></tr>';
       });
     } catch(e) { console.error('Reports error', e); }
   }
@@ -178,7 +313,37 @@
       var tbody = $('users-table-body');
       tbody.innerHTML = '';
       users.forEach(function(u) {
-        tbody.innerHTML += '<tr><td>' + u.id + '</td><td>' + u.username + '</td><td>' + u.full_name + '</td><td>' + u.email + '</td><td>' + badge(u.role, 'role') + '</td></tr>';
+        tbody.innerHTML += '<tr><td>' + u.id + '</td><td>' + u.username + '</td><td>' + u.full_name + '</td><td>' + u.email + '</td>' +
+          '<td>' + badge(u.role, 'role') + '</td>' +
+          '<td>' +
+            '<select data-uid="' + u.id + '" class="role-select" style="padding:0.3rem;border-radius:4px;border:1px solid #475569;background:#0f172a;color:var(--text-main);margin-right:0.5rem;">' +
+              '<option value="staff"' + (u.role==='staff'?' selected':'') + '>Staff</option>' +
+              '<option value="manager"' + (u.role==='manager'?' selected':'') + '>Manager</option>' +
+              '<option value="admin"' + (u.role==='admin'?' selected':'') + '>Admin</option>' +
+            '</select>' +
+            '<button class="btn-delete-user" data-uid="' + u.id + '" style="background:#ef4444;color:#fff;border:none;padding:0.3rem 0.8rem;border-radius:4px;cursor:pointer;">Delete</button>' +
+          '</td></tr>';
+      });
+      // Role change handlers
+      tbody.querySelectorAll('.role-select').forEach(function(sel) {
+        sel.addEventListener('change', async function() {
+          try {
+            await apiFetch('/users/' + sel.dataset.uid + '/role', {
+              method: 'PUT', body: JSON.stringify({ role: sel.value })
+            });
+            loadUsers();
+          } catch(e) { console.error('Role update error', e); }
+        });
+      });
+      // Delete handlers
+      tbody.querySelectorAll('.btn-delete-user').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+          if (!confirm('Delete user #' + btn.dataset.uid + '?')) return;
+          try {
+            await apiFetch('/users/' + btn.dataset.uid, { method: 'DELETE' });
+            loadUsers();
+          } catch(e) { console.error('Delete user error', e); }
+        });
       });
     } catch(e) { console.error('Users error', e); }
   }
@@ -242,6 +407,10 @@
   $('link-audit').addEventListener('click', function(e) { e.preventDefault(); if(state.token) { showView('audit-view'); loadAuditLog(); } });
   $('link-pricing').addEventListener('click', function(e) { e.preventDefault(); showView('pricing-view'); });
   $('link-admin').addEventListener('click', function(e) { e.preventDefault(); if(state.token) { showView('admin-view'); loadSystemMetrics(); } });
+
+  // Back buttons for detail views
+  $('back-to-policies').addEventListener('click', function(e) { e.preventDefault(); showView('policies-view'); loadPolicies(); });
+  $('back-to-claims').addEventListener('click', function(e) { e.preventDefault(); showView('claims-view'); loadClaims(); });
 
   // ── Init ──
   if (state.token) { showView('dashboard-view'); loadDashboard(); }

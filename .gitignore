@@ -1,0 +1,35 @@
+# Dependencies (heavy — ~200MB)
+node_modules/
+backend/node_modules/
+
+# Environment files (CREDENTIALS!)
+.env
+backend/.env
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+db_data/
+
+# Test output
+coverage/
+backend/coverage/
+*.lcov
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Backups (may contain sensitive DB data)
+backups/
+*.sql.bak
+
+# Key files (NEVER push SSH keys)
+*.pem
+*.key

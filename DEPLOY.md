@@ -2,6 +2,37 @@
 
 > This document is a **step-by-step walkthrough** for deploying, testing, and understanding the entire cloud infrastructure. Follow it in order. Each section maps to a graded deliverable.
 
+## Problem Statement
+
+**FinShield Insurance Operations Cloud** is experiencing rapid growth across multiple operational regions. Existing operations rely on disconnected systems, spreadsheets, manual workflows, and isolated reporting environments. The organization requires a **centralized cloud platform** capable of supporting operational management, analytics, reporting, secure access control, monitoring, and future expansion requirements.
+
+This guide walks through building and deploying the **Insurance Management Portal** — a small-scale web application that demonstrates:
+- Scalable cloud architecture (compute, storage, networking)
+- Linux server administration and security
+- Docker containerization and multi-container orchestration
+- MySQL database management with backup/recovery
+- VPC networking with security groups and firewalls
+- Real-time monitoring, resource management, and automation
+- Role-based access control and operational dashboards
+- Infrastructure pricing analysis for Insurance Technology operations
+
+### Deliverable → Section Mapping
+
+| Deliverable | Section(s) |
+|---|---|
+| Cloud Architecture | §3 (IAM), §4 (VPC), §5 (EC2), Architecture Diagram |
+| Linux Administration | §6 (Users, Groups, Permissions, Packages, Logs) |
+| Cloud VM Deployment | §5 (EC2 Launch), §7 (SCP/Git), §10 (Nginx) |
+| Cloud Databases | §9 (MySQL, Schema, Queries, Backup, Recovery) |
+| Docker & Containerization | §8 (Build, Lifecycle, Multi-container, Docker Hub) |
+| Cloud Networking | §4 (VPC, Subnet, IGW, Security Groups, Routes) |
+| Monitoring & Resource Mgmt | §12 (htop, vmstat, docker stats, Health API) |
+| Automation | §13 (backup.sh, monitor.sh, deploy.sh, Cron Jobs) |
+| Operational Dashboards | §11.3 (Dashboard with KPI cards and Chart.js) |
+| Role-Based Access | §11.2 (RBAC verification with 3-tier roles) |
+| Reporting & Analytics | §11.3 (Reports page, Executive portal) |
+| Pricing Strategy | §16 (Compute, Storage, Network, DR, Multi-region) |
+
 ---
 
 ## Table of Contents
@@ -570,11 +601,12 @@ curl -s -X POST $BASE_URL/api/policies \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
+    "policy_number": "POL-A-9999",
     "holder_name": "Test User",
     "holder_email": "test@example.com",
     "policy_type": "auto",
-    "premium_amount": 1200.00,
-    "coverage_amount": 50000.00,
+    "premium_amount": 12500.00,
+    "coverage_amount": 500000.00,
     "start_date": "2026-01-01",
     "end_date": "2027-01-01",
     "region": "Mumbai"
@@ -591,15 +623,15 @@ curl -s -X POST $BASE_URL/api/claims \
     "policy_id": 1,
     "claimant_name": "Test Claimant",
     "claim_type": "accident",
-    "description": "Minor fender bender",
-    "claim_amount": 5000.00
+    "description": "Minor fender bender on NH48",
+    "claim_amount": 75000.00
   }' | python3 -m json.tool
 
 # 8. Get system metrics (admin only)
 curl -s -H "Authorization: Bearer $TOKEN" $BASE_URL/api/system/metrics | python3 -m json.tool
 
 # 9. Get audit log
-curl -s -H "Authorization: Bearer $TOKEN" $BASE_URL/api/audit-log | python3 -m json.tool
+curl -s -H "Authorization: Bearer $TOKEN" $BASE_URL/api/system/audit-log | python3 -m json.tool
 ```
 
 ### 11.2 RBAC Test
@@ -825,16 +857,16 @@ aws ec2 describe-security-groups \
 
 ### 16.1 Single-Region Deployment (ap-south-1 — Mumbai)
 
-| Resource | Spec | Monthly Cost (USD) |
-|---|---|---|
-| **EC2 Instance** | t2.micro (1 vCPU, 1GB RAM) | $0 (free tier) / ~$8.50 |
-| **EBS Storage** | 20 GB gp3 | ~$1.60 |
-| **Data Transfer** | 10 GB outbound | ~$0.90 |
-| **Elastic IP** | 1 static IP | ~$3.65 |
-| **S3 (Backups)** | 5 GB storage | ~$0.12 |
-| | | |
-| **Total (Free Tier)** | | **~$6.27/month** |
-| **Total (Post Free Tier)** | | **~$14.77/month** |
+| Resource | Spec | Monthly Cost (USD) | Monthly Cost (₹ INR) |
+|---|---|---|---|
+| **EC2 Instance** | t2.micro (1 vCPU, 1GB RAM) | $0 (free tier) / ~$8.50 | ₹0 / ~₹710 |
+| **EBS Storage** | 20 GB gp3 | ~$1.60 | ~₹134 |
+| **Data Transfer** | 10 GB outbound | ~$0.90 | ~₹75 |
+| **Elastic IP** | 1 static IP | ~$3.65 | ~₹305 |
+| **S3 (Backups)** | 5 GB storage | ~$0.12 | ~₹10 |
+| | | | |
+| **Total (Free Tier)** | | **~$6.27/month** | **~₹524/month** |
+| **Total (Post Free Tier)** | | **~$14.77/month** | **~₹1,234/month** |
 
 ### 16.2 Production Scale Estimates
 
