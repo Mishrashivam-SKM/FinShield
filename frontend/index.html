@@ -4,27 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FinShield Insurance Portal</title>
+  <meta name="description" content="FinShield Insurance Operations Cloud — Centralized policy and claims management portal">
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div id="app">
-    <!-- Navbar -->
     <nav class="navbar">
       <div class="logo">FinShield Cloud</div>
       <div class="nav-links">
         <a href="#" id="link-dashboard">Dashboard</a>
         <a href="#" id="link-policies">Policies</a>
-        <button id="btn-logout" style="display:none;">Logout</button>
+        <a href="#" id="link-claims">Claims</a>
+        <a href="#" id="link-reports" class="nav-hidden">Reports</a>
+        <a href="#" id="link-users" class="nav-hidden">Users</a>
+        <a href="#" id="link-audit" class="nav-hidden">Audit Log</a>
+        <a href="#" id="link-pricing">Pricing</a>
+        <a href="#" id="link-admin" class="nav-hidden">System</a>
+        <button id="btn-logout" class="nav-hidden">Logout</button>
       </div>
     </nav>
 
-    <!-- Main Content Area -->
     <main id="main-content" class="container">
-      <!-- Login View -->
-      <section id="login-view" class="view active">
+
+      <!-- LOGIN -->
+      <section id="login-view" class="view">
         <div class="card login-card">
           <h2>Sign In</h2>
+          <p class="text-muted" style="margin-bottom:1.5rem">Welcome to FinShield Insurance Portal</p>
           <form id="login-form">
             <div class="form-group">
               <label>Username</label>
@@ -40,39 +48,116 @@
         </div>
       </section>
 
-      <!-- Dashboard View -->
+      <!-- DASHBOARD -->
       <section id="dashboard-view" class="view" style="display:none;">
         <h2>System Dashboard</h2>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Total Policies</h3>
-            <p id="stat-policies">--</p>
-          </div>
-          <div class="stat-card">
-            <h3>Active Claims</h3>
-            <p id="stat-claims">--</p>
-          </div>
+        <div class="stats-grid stats-grid-4">
+          <div class="stat-card"><h3>Total Policies</h3><p id="stat-policies">--</p></div>
+          <div class="stat-card"><h3>Active Claims</h3><p id="stat-claims">--</p></div>
+          <div class="stat-card"><h3>Total Premiums</h3><p id="stat-premiums">--</p></div>
+          <div class="stat-card"><h3>Claims Value</h3><p id="stat-claims-amt">--</p></div>
+        </div>
+        <div class="charts-grid" id="charts-container" style="display:none;">
+          <div class="chart-card"><h3>Claims by Type</h3><canvas id="chart-claims-type"></canvas></div>
+          <div class="chart-card"><h3>Policies by Region</h3><canvas id="chart-policies-region"></canvas></div>
         </div>
       </section>
 
-      <!-- Policies View -->
+      <!-- POLICIES -->
       <section id="policies-view" class="view" style="display:none;">
         <h2>Manage Policies</h2>
         <table class="table">
           <thead>
-            <tr>
-              <th>Policy Number</th>
-              <th>Holder Name</th>
-              <th>Type</th>
-              <th>Premium</th>
-              <th>Status</th>
-            </tr>
+            <tr><th>Policy #</th><th>Holder</th><th>Type</th><th>Premium</th><th>Coverage</th><th>Region</th><th>Status</th></tr>
           </thead>
-          <tbody id="policies-table-body">
-            <!-- Populated via JS -->
-          </tbody>
+          <tbody id="policies-table-body"></tbody>
         </table>
       </section>
+
+      <!-- CLAIMS -->
+      <section id="claims-view" class="view" style="display:none;">
+        <h2>Insurance Claims</h2>
+        <table class="table">
+          <thead>
+            <tr><th>Claim #</th><th>Claimant</th><th>Type</th><th>Amount</th><th>Status</th></tr>
+          </thead>
+          <tbody id="claims-table-body"></tbody>
+        </table>
+      </section>
+
+      <!-- REPORTS -->
+      <section id="reports-view" class="view" style="display:none;">
+        <h2>Reports &amp; Analytics</h2>
+        <div class="stats-grid">
+          <div class="stat-card"><h3>Total Revenue</h3><p id="stat-revenue">--</p></div>
+          <div class="stat-card"><h3>Total Payout</h3><p id="stat-payout">--</p></div>
+        </div>
+        <div class="region-breakdown" style="margin-top:2rem;">
+          <h3>Revenue by Region</h3>
+          <table class="table">
+            <thead><tr><th>Region</th><th>Policies</th><th>Revenue</th></tr></thead>
+            <tbody id="region-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- USERS -->
+      <section id="users-view" class="view" style="display:none;">
+        <h2>User Management</h2>
+        <table class="table">
+          <thead>
+            <tr><th>ID</th><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th></tr>
+          </thead>
+          <tbody id="users-table-body"></tbody>
+        </table>
+      </section>
+
+      <!-- AUDIT LOG -->
+      <section id="audit-view" class="view" style="display:none;">
+        <h2>Audit Log</h2>
+        <table class="table">
+          <thead>
+            <tr><th>Time</th><th>User</th><th>Action</th><th>Target</th><th>Details</th></tr>
+          </thead>
+          <tbody id="audit-table-body"></tbody>
+        </table>
+      </section>
+
+      <!-- PRICING -->
+      <section id="pricing-view" class="view" style="display:none;">
+        <h2>AWS Infrastructure Pricing</h2>
+        <div class="stats-grid stats-grid-4">
+          <div class="stat-card"><h3>EC2 (t2.micro)</h3><p>$8.50<span class="text-muted">/mo</span></p></div>
+          <div class="stat-card"><h3>RDS / MySQL</h3><p>$15.00<span class="text-muted">/mo</span></p></div>
+          <div class="stat-card"><h3>EBS (20 GB)</h3><p>$2.00<span class="text-muted">/mo</span></p></div>
+          <div class="stat-card accent-card"><h3>Total Estimate</h3><p>$25.50<span class="text-muted">/mo</span></p></div>
+        </div>
+        <div class="card" style="margin-top:2rem; padding:2rem;">
+          <h3>Cost Breakdown Details</h3>
+          <table class="table">
+            <thead><tr><th>Service</th><th>Tier</th><th>Monthly Cost</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>EC2</td><td>t2.micro</td><td>$8.50</td><td>1 vCPU, 1 GB RAM, On-Demand</td></tr>
+              <tr><td>EBS</td><td>gp3, 20 GB</td><td>$2.00</td><td>Root volume for EC2</td></tr>
+              <tr><td>RDS</td><td>db.t3.micro</td><td>$15.00</td><td>MySQL 8.0 single-AZ</td></tr>
+              <tr><td>Data Transfer</td><td>Outbound</td><td>$0.00</td><td>First 100 GB free</td></tr>
+              <tr><td>VPC / Networking</td><td>—</td><td>$0.00</td><td>No NAT Gateway needed</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SYSTEM MONITOR -->
+      <section id="admin-view" class="view" style="display:none;">
+        <h2>System Monitoring</h2>
+        <div class="stats-grid stats-grid-4">
+          <div class="stat-card"><h3>CPU Cores</h3><p id="stat-cpu">--</p></div>
+          <div class="stat-card"><h3>Free Memory (MB)</h3><p id="stat-mem">--</p></div>
+          <div class="stat-card"><h3>Load Average</h3><p id="stat-load">--</p></div>
+          <div class="stat-card"><h3>Uptime (hrs)</h3><p id="stat-uptime">--</p></div>
+        </div>
+      </section>
+
     </main>
   </div>
 

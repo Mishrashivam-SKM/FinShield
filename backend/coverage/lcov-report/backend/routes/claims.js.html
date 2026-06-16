@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for backend/routes/policies.js</title>
+    <title>Code coverage report for backend/routes/claims.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">backend/routes</a> policies.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">backend/routes</a> claims.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">51.42% </span>
+                <span class="strong">61.11% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/35</span>
+                <span class='fraction'>22/36</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">40% </span>
+                <span class="strong">60% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/5</span>
+                <span class='fraction'>3/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">52.94% </span>
+                <span class="strong">62.85% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>18/34</span>
+                <span class='fraction'>22/35</span>
             </div>
         
             
@@ -129,9 +129,7 @@
 <a name='L64'></a><a href='#L64'>64</a>
 <a name='L65'></a><a href='#L65'>65</a>
 <a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a>
-<a name='L69'></a><a href='#L69'>69</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
+<a name='L67'></a><a href='#L67'>67</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -176,13 +174,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -190,6 +185,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -206,63 +202,61 @@ const rbac = require('../middleware/rbac');
 &nbsp;
 const router = express.Router();
 &nbsp;
-// GET /api/policies — List all
+// GET /api/claims - List all claims
 router.get('/', auth, async (req, res) =&gt; {
   try {
-    const [policies] = await db.query('SELECT * FROM policies ORDER BY created_at DESC');
-    res.json(policies);
+    const [claims] = await db.query('SELECT * FROM claims');
+    res.json(claims);
   } catch (error) {
-<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to fetch policies', details: error.message });</span>
+<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to fetch claims' });</span>
   }
 });
 &nbsp;
-// GET /api/policies/:id — Single policy detail
+// GET /api/claims/:id - Get single claim details
 router.get('/:id', auth, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
-    const [rows] = <span class="cstat-no" title="statement not covered" >await db.query('SELECT * FROM policies WHERE id = ?', [req.params.id]);</span>
-<span class="cstat-no" title="statement not covered" >    if (rows.length === 0) <span class="cstat-no" title="statement not covered" >return res.status(404).json({ error: 'Policy not found' });</span></span>
-<span class="cstat-no" title="statement not covered" >    res.json(rows[0]);</span>
+    const [claims] = <span class="cstat-no" title="statement not covered" >await db.query('SELECT * FROM claims WHERE id = ?', [req.params.id]);</span>
+<span class="cstat-no" title="statement not covered" >    if(claims.length === 0) <span class="cstat-no" title="statement not covered" >return res.status(404).json({ error: 'Claim not found' });</span></span>
+<span class="cstat-no" title="statement not covered" >    res.json(claims[0]);</span>
   } catch (error) {
-<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to fetch policy' });</span>
+<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to fetch claim' });</span>
   }
 });
 &nbsp;
-// POST /api/policies — Create (Manager+)
-router.post('/', auth, rbac(['admin', 'manager']), async (req, res) =&gt; {
+// POST /api/claims - Submit new claim
+router.post('/', auth, async (req, res) =&gt; {
   try {
-    const { policy_number, holder_name, holder_email, policy_type, premium_amount, coverage_amount, start_date, end_date, region } = req.body;
+    const { claim_number, policy_id, claimant_name, claim_type, description, claim_amount } = req.body;
     await db.query(
-      `INSERT INTO policies (policy_number, holder_name, holder_email, policy_type, premium_amount, coverage_amount, start_date, end_date, region, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [policy_number, holder_name, holder_email, policy_type, premium_amount, coverage_amount, start_date, end_date, region, req.user.id]
+      `INSERT INTO claims (claim_number, policy_id, claimant_name, claim_type, description, claim_amount)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [claim_number, policy_id, claimant_name, claim_type, description, claim_amount]
     );
-    res.status(201).json({ message: 'Policy created successfully' });
+    res.status(201).json({ message: 'Claim submitted successfully' });
   } catch (error) {
-<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to create policy', details: error.message });</span>
+<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to submit claim' });</span>
   }
 });
 &nbsp;
-// PUT /api/policies/:id — Update (Manager+)
-router.put('/:id', auth, rbac(['admin', 'manager']), <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-<span class="cstat-no" title="statement not covered" >  try {</span>
-    const { holder_name, holder_email, policy_type, premium_amount, coverage_amount, start_date, end_date, status, region } = <span class="cstat-no" title="statement not covered" >req.body;</span>
-<span class="cstat-no" title="statement not covered" >    await db.query(</span>
-      `UPDATE policies SET holder_name=?, holder_email=?, policy_type=?, premium_amount=?, coverage_amount=?, start_date=?, end_date=?, status=?, region=? WHERE id=?`,
-      [holder_name, holder_email, policy_type, premium_amount, coverage_amount, start_date, end_date, status, region, req.params.id]
-    );
-<span class="cstat-no" title="statement not covered" >    res.json({ message: 'Policy updated successfully' });</span>
+// PUT /api/claims/:id - Update claim status (manager/admin)
+router.put('/:id', auth, rbac(['admin', 'manager']), async (req, res) =&gt; {
+  try {
+    const { status } = req.body;
+    await db.query('UPDATE claims SET status = ? WHERE id = ?', [status, req.params.id]);
+    res.json({ message: 'Claim updated successfully' });
   } catch (error) {
-<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to update policy' });</span>
+<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to update claim' });</span>
   }
 });
 &nbsp;
-// DELETE /api/policies/:id — Cancel (Admin only)
-router.delete('/:id', auth, rbac(['admin']), <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
+// PUT /api/claims/:id/assign - Assign claim to staff (manager/admin)
+router.put('/:id/assign', auth, rbac(['admin', 'manager']), <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    await db.query('UPDATE policies SET status = "cancelled" WHERE id = ?', [req.params.id]);</span>
-<span class="cstat-no" title="statement not covered" >    res.json({ message: 'Policy cancelled successfully' });</span>
+    const { assigned_to } = <span class="cstat-no" title="statement not covered" >req.body;</span>
+<span class="cstat-no" title="statement not covered" >    await db.query('UPDATE claims SET assigned_to = ? WHERE id = ?', [assigned_to, req.params.id]);</span>
+<span class="cstat-no" title="statement not covered" >    res.json({ message: 'Claim assigned successfully' });</span>
   } catch (error) {
-<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to cancel policy' });</span>
+<span class="cstat-no" title="statement not covered" >    res.status(500).json({ error: 'Failed to assign claim' });</span>
   }
 });
 &nbsp;
