@@ -191,18 +191,35 @@
       $('pd-coverage').textContent = '₹' + Number(p.coverage_amount).toLocaleString('en-IN');
       $('pd-start').textContent = p.start_date ? p.start_date.split('T')[0] : '—';
       $('pd-end').textContent = p.end_date ? p.end_date.split('T')[0] : '—';
-      // Show cancel button for admin only
-      $('pd-actions').style.display = (state.role === 'admin') ? 'block' : 'none';
+      // Show actions for manager+ (status update), delete only for admin
+      $('pd-actions').style.display = (['admin','manager'].indexOf(state.role) > -1) ? 'block' : 'none';
+      $('btn-cancel-policy').style.display = (state.role === 'admin') ? 'inline-block' : 'none';
+      $('pd-new-status').value = p.status;
       $('pd-msg').textContent = '';
     } catch(e) { console.error('Policy detail error', e); }
   }
 
-  // ── Cancel Policy (Admin) ──
-  $('btn-cancel-policy').addEventListener('click', async function() {
+  // ── Update Policy Status (Manager+) ──
+  $('btn-update-policy').addEventListener('click', async function() {
     if (!currentPolicyId) return;
     try {
+      await apiFetch('/policies/' + currentPolicyId, {
+        method: 'PUT',
+        body: JSON.stringify({ status: $('pd-new-status').value })
+      });
+      $('pd-msg').textContent = '✅ Status updated'; $('pd-msg').style.color = 'var(--accent)';
+      $('pd-status').innerHTML = badge($('pd-new-status').value);
+    } catch(err) {
+      $('pd-msg').textContent = '❌ ' + err.message; $('pd-msg').style.color = 'var(--error)';
+    }
+  });
+
+  // ── Delete Policy (Admin) ──
+  $('btn-cancel-policy').addEventListener('click', async function() {
+    if (!currentPolicyId || !confirm('Delete this policy?')) return;
+    try {
       await apiFetch('/policies/' + currentPolicyId, { method: 'DELETE' });
-      $('pd-msg').textContent = '✅ Policy cancelled'; $('pd-msg').style.color = 'var(--accent)';
+      $('pd-msg').textContent = '✅ Policy deleted'; $('pd-msg').style.color = 'var(--accent)';
       $('pd-status').innerHTML = badge('cancelled');
     } catch(err) {
       $('pd-msg').textContent = '❌ ' + err.message; $('pd-msg').style.color = 'var(--error)';

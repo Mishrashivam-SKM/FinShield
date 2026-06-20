@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FinShield Insurance Portal</title>
-  <meta name="description" content="FinShield Insurance Operations Cloud — Centralized policy and claims management portal">
+  <meta name="description"
+    content="FinShield Insurance Operations Cloud — Centralized policy and claims management portal">
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
+
 <body>
   <div id="app">
     <nav class="navbar">
@@ -52,14 +55,30 @@
       <section id="dashboard-view" class="view" style="display:none;">
         <h2>System Dashboard</h2>
         <div class="stats-grid stats-grid-4">
-          <div class="stat-card"><h3>Total Policies</h3><p id="stat-policies">--</p></div>
-          <div class="stat-card"><h3>Active Claims</h3><p id="stat-claims">--</p></div>
-          <div class="stat-card"><h3>Total Premiums</h3><p id="stat-premiums">--</p></div>
-          <div class="stat-card"><h3>Claims Value</h3><p id="stat-claims-amt">--</p></div>
+          <div class="stat-card">
+            <h3>Total Policies</h3>
+            <p id="stat-policies">--</p>
+          </div>
+          <div class="stat-card">
+            <h3>Active Claims</h3>
+            <p id="stat-claims">--</p>
+          </div>
+          <div class="stat-card">
+            <h3>Total Premiums</h3>
+            <p id="stat-premiums">--</p>
+          </div>
+          <div class="stat-card">
+            <h3>Claims Value</h3>
+            <p id="stat-claims-amt">--</p>
+          </div>
         </div>
         <div class="charts-grid" id="charts-container" style="display:none;">
-          <div class="chart-card"><h3>Claims by Type</h3><canvas id="chart-claims-type"></canvas></div>
-          <div class="chart-card"><h3>Policies by Region</h3><canvas id="chart-policies-region"></canvas></div>
+          <div class="chart-card">
+            <h3>Claims by Type</h3><canvas id="chart-claims-type"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Policies by Region</h3><canvas id="chart-policies-region"></canvas>
+          </div>
         </div>
       </section>
 
@@ -69,29 +88,50 @@
         <div class="card" id="create-policy-card" style="margin-bottom:2rem; padding:1.5rem; display:none;">
           <h3 style="margin:0 0 1rem 0; color:var(--accent);">Create New Policy</h3>
           <form id="policy-form" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem;">
-            <div class="form-group" style="margin:0"><label>Policy Number</label><input type="text" id="pol-number" required placeholder="POL-H-0019"></div>
-            <div class="form-group" style="margin:0"><label>Holder Name</label><input type="text" id="pol-holder" required></div>
-            <div class="form-group" style="margin:0"><label>Holder Email</label><input type="email" id="pol-email"></div>
+            <div class="form-group" style="margin:0"><label>Policy Number</label><input type="text" id="pol-number"
+                required placeholder="POL-H-0019"></div>
+            <div class="form-group" style="margin:0"><label>Holder Name</label><input type="text" id="pol-holder"
+                required></div>
+            <div class="form-group" style="margin:0"><label>Holder Email</label><input type="email" id="pol-email">
+            </div>
             <div class="form-group" style="margin:0"><label>Type</label>
-              <select id="pol-type" style="width:100%;padding:0.75rem;border-radius:8px;border:1px solid #475569;background:#0f172a;color:var(--text-main);">
-                <option value="health">Health</option><option value="auto">Auto</option><option value="life">Life</option>
-                <option value="property">Property</option><option value="business">Business</option>
+              <select id="pol-type"
+                style="width:100%;padding:0.75rem;border-radius:8px;border:1px solid #475569;background:#0f172a;color:var(--text-main);">
+                <option value="health">Health</option>
+                <option value="auto">Auto</option>
+                <option value="life">Life</option>
+                <option value="property">Property</option>
+                <option value="business">Business</option>
               </select>
             </div>
-            <div class="form-group" style="margin:0"><label>Premium (₹)</label><input type="number" id="pol-premium" required min="1"></div>
-            <div class="form-group" style="margin:0"><label>Coverage (₹)</label><input type="number" id="pol-coverage" required min="1"></div>
-            <div class="form-group" style="margin:0"><label>Start Date</label><input type="date" id="pol-start" required></div>
-            <div class="form-group" style="margin:0"><label>End Date</label><input type="date" id="pol-end" required></div>
-            <div class="form-group" style="margin:0"><label>Region</label><input type="text" id="pol-region" placeholder="Mumbai"></div>
+            <div class="form-group" style="margin:0"><label>Premium (₹)</label><input type="number" id="pol-premium"
+                required min="1"></div>
+            <div class="form-group" style="margin:0"><label>Coverage (₹)</label><input type="number" id="pol-coverage"
+                required min="1"></div>
+            <div class="form-group" style="margin:0"><label>Start Date</label><input type="date" id="pol-start"
+                required></div>
+            <div class="form-group" style="margin:0"><label>End Date</label><input type="date" id="pol-end" required>
+            </div>
+            <div class="form-group" style="margin:0"><label>Region</label><input type="text" id="pol-region"
+                placeholder="Mumbai"></div>
             <div style="grid-column:1/-1;display:flex;align-items:center;gap:1rem;">
-              <button type="submit" class="btn btn-primary" style="width:auto;padding:0.6rem 2rem;">Create Policy</button>
+              <button type="submit" class="btn btn-primary" style="width:auto;padding:0.6rem 2rem;">Create
+                Policy</button>
               <span id="pol-msg" style="font-size:0.85rem;"></span>
             </div>
           </form>
         </div>
         <table class="table">
           <thead>
-            <tr><th>Policy #</th><th>Holder</th><th>Type</th><th>Premium</th><th>Coverage</th><th>Region</th><th>Status</th></tr>
+            <tr>
+              <th>Policy #</th>
+              <th>Holder</th>
+              <th>Type</th>
+              <th>Premium</th>
+              <th>Coverage</th>
+              <th>Region</th>
+              <th>Status</th>
+            </tr>
           </thead>
           <tbody id="policies-table-body"></tbody>
         </table>
@@ -99,24 +139,66 @@
 
       <!-- POLICY DETAIL -->
       <section id="policy-detail-view" class="view" style="display:none;">
-        <h2><a href="#" id="back-to-policies" style="color:var(--accent);text-decoration:none;">← Policies</a> / Policy Detail</h2>
+        <h2><a href="#" id="back-to-policies" style="color:var(--accent);text-decoration:none;">← Policies</a> / Policy
+          Detail</h2>
         <div class="card" style="margin-top:1rem;">
           <div class="stats-grid stats-grid-4">
-            <div class="stat-card"><h3>Policy Number</h3><p id="pd-number">--</p></div>
-            <div class="stat-card"><h3>Type</h3><p id="pd-type">--</p></div>
-            <div class="stat-card"><h3>Status</h3><p id="pd-status">--</p></div>
-            <div class="stat-card"><h3>Region</h3><p id="pd-region">--</p></div>
+            <div class="stat-card">
+              <h3>Policy Number</h3>
+              <p id="pd-number">--</p>
+            </div>
+            <div class="stat-card">
+              <h3>Type</h3>
+              <p id="pd-type">--</p>
+            </div>
+            <div class="stat-card">
+              <h3>Status</h3>
+              <p id="pd-status">--</p>
+            </div>
+            <div class="stat-card">
+              <h3>Region</h3>
+              <p id="pd-region">--</p>
+            </div>
           </div>
           <table class="table" style="margin-top:1.5rem;">
-            <tr><th>Holder Name</th><td id="pd-holder">--</td></tr>
-            <tr><th>Holder Email</th><td id="pd-email">--</td></tr>
-            <tr><th>Premium</th><td id="pd-premium">--</td></tr>
-            <tr><th>Coverage</th><td id="pd-coverage">--</td></tr>
-            <tr><th>Start Date</th><td id="pd-start">--</td></tr>
-            <tr><th>End Date</th><td id="pd-end">--</td></tr>
+            <tr>
+              <th>Holder Name</th>
+              <td id="pd-holder">--</td>
+            </tr>
+            <tr>
+              <th>Holder Email</th>
+              <td id="pd-email">--</td>
+            </tr>
+            <tr>
+              <th>Premium</th>
+              <td id="pd-premium">--</td>
+            </tr>
+            <tr>
+              <th>Coverage</th>
+              <td id="pd-coverage">--</td>
+            </tr>
+            <tr>
+              <th>Start Date</th>
+              <td id="pd-start">--</td>
+            </tr>
+            <tr>
+              <th>End Date</th>
+              <td id="pd-end">--</td>
+            </tr>
           </table>
           <div id="pd-actions" style="margin-top:1.5rem;display:none;">
-            <button id="btn-cancel-policy" class="btn" style="background:#ef4444;width:auto;padding:0.5rem 1.5rem;">Cancel Policy</button>
+            <label style="margin-right:0.5rem;">Change Status:</label>
+            <select id="pd-new-status"
+              style="padding:0.5rem;border-radius:8px;border:1px solid #475569;background:#0f172a;color:var(--text-main);">
+              <option value="pending">Pending</option>
+              <option value="active">Active</option>
+              <option value="expired">Expired</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <button id="btn-update-policy" class="btn btn-primary"
+              style="width:auto;padding:0.5rem 1.5rem;margin-left:0.5rem;">Update Status</button>
+            <button id="btn-cancel-policy" class="btn"
+              style="background:#ef4444;width:auto;padding:0.5rem 1.5rem;margin-left:0.5rem;">Delete Policy</button>
             <span id="pd-msg" style="margin-left:1rem;font-size:0.85rem;"></span>
           </div>
         </div>
@@ -128,25 +210,40 @@
         <div class="card" style="margin-bottom:2rem; padding:1.5rem;">
           <h3 style="margin:0 0 1rem 0; color:var(--accent);">Submit New Claim</h3>
           <form id="claim-form" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-            <div class="form-group" style="margin:0"><label>Policy ID</label><input type="number" id="claim-policy-id" required min="1"></div>
-            <div class="form-group" style="margin:0"><label>Claimant Name</label><input type="text" id="claim-claimant" required></div>
+            <div class="form-group" style="margin:0"><label>Policy ID</label><input type="number" id="claim-policy-id"
+                required min="1"></div>
+            <div class="form-group" style="margin:0"><label>Claimant Name</label><input type="text" id="claim-claimant"
+                required></div>
             <div class="form-group" style="margin:0"><label>Claim Type</label>
-              <select id="claim-type" style="width:100%;padding:0.75rem;border-radius:8px;border:1px solid #475569;background:#0f172a;color:var(--text-main);">
-                <option value="accident">Accident</option><option value="theft">Theft</option><option value="medical">Medical</option>
-                <option value="natural_disaster">Natural Disaster</option><option value="other">Other</option>
+              <select id="claim-type"
+                style="width:100%;padding:0.75rem;border-radius:8px;border:1px solid #475569;background:#0f172a;color:var(--text-main);">
+                <option value="accident">Accident</option>
+                <option value="theft">Theft</option>
+                <option value="medical">Medical</option>
+                <option value="natural_disaster">Natural Disaster</option>
+                <option value="other">Other</option>
               </select>
             </div>
-            <div class="form-group" style="margin:0"><label>Amount (₹)</label><input type="number" id="claim-amount" required min="1"></div>
-            <div class="form-group" style="margin:0;grid-column:1/-1"><label>Description</label><input type="text" id="claim-desc" placeholder="Brief description of the claim"></div>
+            <div class="form-group" style="margin:0"><label>Amount (₹)</label><input type="number" id="claim-amount"
+                required min="1"></div>
+            <div class="form-group" style="margin:0;grid-column:1/-1"><label>Description</label><input type="text"
+                id="claim-desc" placeholder="Brief description of the claim"></div>
             <div style="grid-column:1/-1;display:flex;align-items:center;gap:1rem;">
-              <button type="submit" class="btn btn-primary" style="width:auto;padding:0.6rem 2rem;">Submit Claim</button>
+              <button type="submit" class="btn btn-primary" style="width:auto;padding:0.6rem 2rem;">Submit
+                Claim</button>
               <span id="claim-msg" style="font-size:0.85rem;"></span>
             </div>
           </form>
         </div>
         <table class="table">
           <thead>
-            <tr><th>Claim #</th><th>Claimant</th><th>Type</th><th>Amount</th><th>Status</th></tr>
+            <tr>
+              <th>Claim #</th>
+              <th>Claimant</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
           </thead>
           <tbody id="claims-table-body"></tbody>
         </table>
@@ -154,27 +251,57 @@
 
       <!-- CLAIM DETAIL -->
       <section id="claim-detail-view" class="view" style="display:none;">
-        <h2><a href="#" id="back-to-claims" style="color:var(--accent);text-decoration:none;">← Claims</a> / Claim Detail</h2>
+        <h2><a href="#" id="back-to-claims" style="color:var(--accent);text-decoration:none;">← Claims</a> / Claim
+          Detail</h2>
         <div class="card" style="margin-top:1rem;">
           <div class="stats-grid stats-grid-4">
-            <div class="stat-card"><h3>Claim Number</h3><p id="cd-number">--</p></div>
-            <div class="stat-card"><h3>Type</h3><p id="cd-type">--</p></div>
-            <div class="stat-card"><h3>Status</h3><p id="cd-status">--</p></div>
-            <div class="stat-card"><h3>Amount</h3><p id="cd-amount">--</p></div>
+            <div class="stat-card">
+              <h3>Claim Number</h3>
+              <p id="cd-number">--</p>
+            </div>
+            <div class="stat-card">
+              <h3>Type</h3>
+              <p id="cd-type">--</p>
+            </div>
+            <div class="stat-card">
+              <h3>Status</h3>
+              <p id="cd-status">--</p>
+            </div>
+            <div class="stat-card">
+              <h3>Amount</h3>
+              <p id="cd-amount">--</p>
+            </div>
           </div>
           <table class="table" style="margin-top:1.5rem;">
-            <tr><th>Claimant</th><td id="cd-claimant">--</td></tr>
-            <tr><th>Description</th><td id="cd-desc">--</td></tr>
-            <tr><th>Submitted</th><td id="cd-submitted">--</td></tr>
-            <tr><th>Resolved</th><td id="cd-resolved">--</td></tr>
+            <tr>
+              <th>Claimant</th>
+              <td id="cd-claimant">--</td>
+            </tr>
+            <tr>
+              <th>Description</th>
+              <td id="cd-desc">--</td>
+            </tr>
+            <tr>
+              <th>Submitted</th>
+              <td id="cd-submitted">--</td>
+            </tr>
+            <tr>
+              <th>Resolved</th>
+              <td id="cd-resolved">--</td>
+            </tr>
           </table>
           <div id="cd-actions" style="margin-top:1.5rem;display:none;">
             <label style="margin-right:0.5rem;">Update Status:</label>
-            <select id="cd-new-status" style="padding:0.5rem;border-radius:8px;border:1px solid #475569;background:#0f172a;color:var(--text-main);">
-              <option value="submitted">Submitted</option><option value="under_review">Under Review</option>
-              <option value="approved">Approved</option><option value="rejected">Rejected</option><option value="settled">Settled</option>
+            <select id="cd-new-status"
+              style="padding:0.5rem;border-radius:8px;border:1px solid #475569;background:#0f172a;color:var(--text-main);">
+              <option value="submitted">Submitted</option>
+              <option value="under_review">Under Review</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+              <option value="settled">Settled</option>
             </select>
-            <button id="btn-update-claim" class="btn btn-primary" style="width:auto;padding:0.5rem 1.5rem;margin-left:0.5rem;">Update</button>
+            <button id="btn-update-claim" class="btn btn-primary"
+              style="width:auto;padding:0.5rem 1.5rem;margin-left:0.5rem;">Update</button>
             <span id="cd-msg" style="margin-left:1rem;font-size:0.85rem;"></span>
           </div>
         </div>
@@ -184,13 +311,25 @@
       <section id="reports-view" class="view" style="display:none;">
         <h2>Reports &amp; Analytics</h2>
         <div class="stats-grid">
-          <div class="stat-card"><h3>Total Revenue</h3><p id="stat-revenue">--</p></div>
-          <div class="stat-card"><h3>Total Payout</h3><p id="stat-payout">--</p></div>
+          <div class="stat-card">
+            <h3>Total Revenue</h3>
+            <p id="stat-revenue">--</p>
+          </div>
+          <div class="stat-card">
+            <h3>Total Payout</h3>
+            <p id="stat-payout">--</p>
+          </div>
         </div>
         <div class="region-breakdown" style="margin-top:2rem;">
           <h3>Revenue by Region</h3>
           <table class="table">
-            <thead><tr><th>Region</th><th>Policies</th><th>Revenue</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th>Policies</th>
+                <th>Revenue</th>
+              </tr>
+            </thead>
             <tbody id="region-table-body"></tbody>
           </table>
         </div>
@@ -201,7 +340,14 @@
         <h2>User Management</h2>
         <table class="table">
           <thead>
-            <tr><th>ID</th><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
           </thead>
           <tbody id="users-table-body"></tbody>
         </table>
@@ -212,7 +358,13 @@
         <h2>Audit Log</h2>
         <table class="table">
           <thead>
-            <tr><th>Time</th><th>User</th><th>Action</th><th>Target</th><th>Details</th></tr>
+            <tr>
+              <th>Time</th>
+              <th>User</th>
+              <th>Action</th>
+              <th>Target</th>
+              <th>Details</th>
+            </tr>
           </thead>
           <tbody id="audit-table-body"></tbody>
         </table>
@@ -222,21 +374,65 @@
       <section id="pricing-view" class="view" style="display:none;">
         <h2>AWS Infrastructure Pricing</h2>
         <div class="stats-grid stats-grid-4">
-          <div class="stat-card"><h3>EC2 (t2.micro)</h3><p>₹710<span class="text-muted">/mo</span></p></div>
-          <div class="stat-card"><h3>RDS / MySQL</h3><p>₹1,250<span class="text-muted">/mo</span></p></div>
-          <div class="stat-card"><h3>EBS (20 GB)</h3><p>₹167<span class="text-muted">/mo</span></p></div>
-          <div class="stat-card accent-card"><h3>Total Estimate</h3><p>₹2,127<span class="text-muted">/mo</span></p></div>
+          <div class="stat-card">
+            <h3>EC2 (t2.micro)</h3>
+            <p>₹710<span class="text-muted">/mo</span></p>
+          </div>
+          <div class="stat-card">
+            <h3>RDS / MySQL</h3>
+            <p>₹1,250<span class="text-muted">/mo</span></p>
+          </div>
+          <div class="stat-card">
+            <h3>EBS (20 GB)</h3>
+            <p>₹167<span class="text-muted">/mo</span></p>
+          </div>
+          <div class="stat-card accent-card">
+            <h3>Total Estimate</h3>
+            <p>₹2,127<span class="text-muted">/mo</span></p>
+          </div>
         </div>
         <div class="card" style="margin-top:2rem; padding:2rem;">
           <h3>Cost Breakdown Details</h3>
           <table class="table">
-            <thead><tr><th>Service</th><th>Tier</th><th>Monthly (₹)</th><th>Notes</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Tier</th>
+                <th>Monthly (₹)</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>EC2</td><td>t2.micro</td><td>₹710</td><td>1 vCPU, 1 GB RAM, On-Demand</td></tr>
-              <tr><td>EBS</td><td>gp3, 20 GB</td><td>₹167</td><td>Root volume for EC2</td></tr>
-              <tr><td>RDS</td><td>db.t3.micro</td><td>₹1,250</td><td>MySQL 8.0 single-AZ</td></tr>
-              <tr><td>Data Transfer</td><td>Outbound</td><td>₹0</td><td>First 100 GB free</td></tr>
-              <tr><td>VPC / Networking</td><td>—</td><td>₹0</td><td>No NAT Gateway needed</td></tr>
+              <tr>
+                <td>EC2</td>
+                <td>t2.micro</td>
+                <td>₹710</td>
+                <td>1 vCPU, 1 GB RAM, On-Demand</td>
+              </tr>
+              <tr>
+                <td>EBS</td>
+                <td>gp3, 20 GB</td>
+                <td>₹167</td>
+                <td>Root volume for EC2</td>
+              </tr>
+              <tr>
+                <td>RDS</td>
+                <td>db.t3.micro</td>
+                <td>₹1,250</td>
+                <td>MySQL 8.0 single-AZ</td>
+              </tr>
+              <tr>
+                <td>Data Transfer</td>
+                <td>Outbound</td>
+                <td>₹0</td>
+                <td>First 100 GB free</td>
+              </tr>
+              <tr>
+                <td>VPC / Networking</td>
+                <td>—</td>
+                <td>₹0</td>
+                <td>No NAT Gateway needed</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -246,10 +442,22 @@
       <section id="admin-view" class="view" style="display:none;">
         <h2>System Monitoring</h2>
         <div class="stats-grid stats-grid-4">
-          <div class="stat-card"><h3>CPU Cores</h3><p id="stat-cpu">--</p></div>
-          <div class="stat-card"><h3>Free Memory (MB)</h3><p id="stat-mem">--</p></div>
-          <div class="stat-card"><h3>Load Average</h3><p id="stat-load">--</p></div>
-          <div class="stat-card"><h3>Uptime (hrs)</h3><p id="stat-uptime">--</p></div>
+          <div class="stat-card">
+            <h3>CPU Cores</h3>
+            <p id="stat-cpu">--</p>
+          </div>
+          <div class="stat-card">
+            <h3>Free Memory (MB)</h3>
+            <p id="stat-mem">--</p>
+          </div>
+          <div class="stat-card">
+            <h3>Load Average</h3>
+            <p id="stat-load">--</p>
+          </div>
+          <div class="stat-card">
+            <h3>Uptime (hrs)</h3>
+            <p id="stat-uptime">--</p>
+          </div>
         </div>
       </section>
 
@@ -258,4 +466,5 @@
 
   <script src="js/app.js"></script>
 </body>
+
 </html>
